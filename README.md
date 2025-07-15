@@ -34,6 +34,7 @@ The application features a beautiful pine green color scheme that creates a calm
 
 ```
 ├── index.html              # Main HTML file
+├── data.yml               # Life events data (YAML format)
 ├── package.json           # Optional npm configuration  
 ├── README.md              # This file
 ├── css/
@@ -88,17 +89,16 @@ To customize colors, simply modify these variables at the top of the CSS file.
 
 ### Adding Life Events
 
-Edit the `dataYML` variable in `js/app.js`:
+Edit the `data.yml` file in the root directory:
 
-```javascript
-const dataYML = `
+```yaml
 - 2025-07-15:
     name: 'Your new event'
     desc: |
       Description with **markdown** support.
       
       ![Image](assets/your-image.jpg)
-`;
+```
 ```
 
 ### Modifying Styles
@@ -142,6 +142,13 @@ Later created by [@rafalpast](https://sonnet.io).
 Now modified by [@knhash](https://knhash.in).
 
 ## Recent Changes
+
+### v2.1 - External Data File (July 2025)
+
+- **Data externalization**: Moved life events data from JavaScript to external `data.yml` file
+- **Easier editing**: Life events can now be edited directly from the root directory
+- **Better separation**: Cleaner code structure with data separated from logic
+- **Maintained compatibility**: No changes to YAML format or functionality
 
 ### v2.0 - Pine Green Theme (July 2025)
 
