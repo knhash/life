@@ -1,10 +1,10 @@
-# Life
+# Life in Weeks
 
 A life timeline visualization in pure HTML, CSS, and JavaScript.
 
 ## About
 
-This application visualizes a life as a timeline of days, with interactive events, milestone markers, and descriptions. Originally built with Svelte, it has been converted to vanilla web technologies for simplicity and broader compatibility.
+This application visualizes a life as a timeline of weeks, with interactive events, milestone markers, and descriptions. Originally built with Svelte and later converted to vanilla web technologies for simplicity and broader compatibility.
 
 The application features a beautiful pine green color scheme that creates a calming, natural aesthetic while maintaining excellent readability and contrast.
 
@@ -12,11 +12,12 @@ The application features a beautiful pine green color scheme that creates a calm
 
 ## Features
 
-- **Timeline visualization** with life events
+- **Timeline visualization** with life events organized by weeks
 - **Interactive event descriptions** with markdown support
 - **Birthday markers** and anniversary tracking
 - **"Today" marker** with animated heart
-- **Future/past day differentiation**
+- **Future/past week differentiation**
+- **Week number display** (ISO 8601 standard)
 - **Modal popups** for detailed event information
 - **Responsive design** for all screen sizes
 - **No build process** required - just serve the files
@@ -81,7 +82,7 @@ The application uses a pine green color palette defined by CSS custom properties
 --color-bg-fade: #f4f9f4ee; /* Background with transparency */
 --color-text: #2d4a2d;      /* Dark pine green text */
 --color-life: #6b8e6b;      /* Medium pine green for life dots */
---color-future: #c8dac8;    /* Light pine green for future days */
+--color-future: #c8dac8;    /* Light pine green for future weeks */
 --color-link: rgb(34, 102, 68); /* Deep pine green for links */
 ```
 
@@ -89,7 +90,7 @@ To customize colors, simply modify these variables at the top of the CSS file.
 
 ### Adding Life Events
 
-Edit the `data.yml` file in the root directory:
+Edit the `data.yml` file in the root directory. Events are grouped by the week they fall in:
 
 ```yaml
 - 2025-07-15:
@@ -97,8 +98,12 @@ Edit the `data.yml` file in the root directory:
     desc: |
       Description with **markdown** support.
       
+      This event will appear in Week 29, 2025.
+      
       ![Image](assets/your-image.jpg)
 ```
+
+**Note**: Events that fall within the same week (Monday-Sunday) will be grouped together and display the same week number.
 ```
 
 ### Modifying Styles
@@ -142,6 +147,15 @@ Later created by [@rafalpast](https://sonnet.io).
 Now modified by [@knhash](https://knhash.in).
 
 ## Recent Changes
+
+### v3.0 - Weeks Instead of Days (July 2025)
+
+- **Week-based timeline**: Converted from daily to weekly visualization for a more condensed lifetime view
+- **Week number display**: Events now show "Week X, YYYY" format using ISO 8601 standard
+- **Monday-Sunday weeks**: Aligned to standard business week format starting on Monday
+- **Grouped events**: Events within the same week are now grouped together
+- **Improved date handling**: All date calculations updated to work with week boundaries
+- **Container updates**: Updated HTML structure and CSS classes from "days" to "weeks"
 
 ### v2.1 - External Data File (July 2025)
 

@@ -21,16 +21,31 @@ marked.use({
 // Data will be loaded from external YAML file
 
 // Utility functions
-const getDayID = (date) => date.toISOString().split('T')[0];
+const getWeekID = (date) => {
+    // Get the Monday of the week for the given date
+    const d = new Date(date);
+    const day = d.getDay() || 7; // Convert Sunday from 0 to 7
+    d.setDate(d.getDate() - day + 1); // Move to Monday
+    return d.toISOString().split('T')[0];
+};
 
-const ONE_DAY = 24 * 60 * 60 * 1000;
+const getWeekNumber = (date) => {
+    // Get ISO week number (1-53)
+    const d = new Date(date);
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    return weekNo;
+};
 
-const getNumberOfDaysBetweenDates = (from, to) =>
-    Math.round((to.getTime() - from.getTime()) / ONE_DAY);
+const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
 
-const getBirthdays = (birthdayDayID, to, today) => {
-    const todayID = getDayID(today);
-    const birthdayDate = new Date(birthdayDayID);
+const getNumberOfWeeksBetweenDates = (from, to) =>
+    Math.round((to.getTime() - from.getTime()) / ONE_WEEK);
+
+const getBirthdays = (birthdayWeekID, to, today) => {
+    const todayID = getWeekID(today);
+    const birthdayDate = new Date(birthdayWeekID);
     const result = [];
 
     let startDate = new Date(birthdayDate.getTime());
@@ -38,12 +53,12 @@ const getBirthdays = (birthdayDayID, to, today) => {
     let years = 1;
 
     while (startDate.getTime() < to.getTime()) {
-        const start = getDayID(startDate);
+        const start = getWeekID(startDate);
         if (start !== todayID) {
             const marker = {
                 type: 'marker',
                 markerType: 'birthday',
-                start: getDayID(startDate),
+                start: getWeekID(startDate),
                 name: years.toString()
             };
 
@@ -56,20 +71,20 @@ const getBirthdays = (birthdayDayID, to, today) => {
     return result;
 };
 
-const calculateDays = ({ from, to, events = {}, today }) => {
+const calculateWeeks = ({ from, to, events = {}, today }) => {
     const eventsArr = Object.entries(events);
-    const renderableEvents = eventsArr.map(([dateStr, dayMeta]) => {
+    const renderableEvents = eventsArr.map(([dateStr, weekMeta]) => {
         const date = new Date(dateStr);
-        const day = {
-            ...dayMeta,
-            start: getDayID(date),
+        const week = {
+            ...weekMeta,
+            start: getWeekID(date),
             type: 'event'
         };
-        return [date, day];
+        return [date, week];
     });
 
     const renderableToday = {
-        start: getDayID(today),
+        start: getWeekID(today),
         type: 'marker',
         markerType: 'today'
     };
@@ -88,48 +103,48 @@ const calculateDays = ({ from, to, events = {}, today }) => {
         return [
             {
                 type: 'uneventful',
-                start: getDayID(from),
-                duration: getNumberOfDaysBetweenDates(from, to)
+                start: getWeekID(from),
+                duration: getNumberOfWeeksBetweenDates(from, to)
             }
         ];
 
-    const shouldAddDaysAfter = getNumberOfDaysBetweenDates(new Date(maybeLastEvent[0]), to) > 0;
+    const shouldAddWeeksAfter = getNumberOfWeeksBetweenDates(new Date(maybeLastEvent[0]), to) > 0;
 
-    const dayRecordDates = renderableEvents.reduce(
+    const weekRecordDates = renderableEvents.reduce(
         (all, [currDate, curr]) => {
-            const daysBefore = getNumberOfDaysBetweenDates(all.lastDate, currDate);
+            const weeksBefore = getNumberOfWeeksBetweenDates(all.lastDate, currDate);
 
             const event = curr;
 
-            if (!(daysBefore > 0))
+            if (!(weeksBefore > 0))
                 return {
-                    lastDate: new Date(currDate.getTime() + ONE_DAY),
-                    days: [...all.days, event]
+                    lastDate: new Date(currDate.getTime() + ONE_WEEK),
+                    weeks: [...all.weeks, event]
                 };
 
             const uneventful = {
                 type: 'uneventful',
-                start: getDayID(all.lastDate),
-                duration: daysBefore
+                start: getWeekID(all.lastDate),
+                duration: weeksBefore
             };
 
             return {
-                lastDate: new Date(currDate.getTime() + ONE_DAY),
-                days: [...all.days, uneventful, event]
+                lastDate: new Date(currDate.getTime() + ONE_WEEK),
+                weeks: [...all.weeks, uneventful, event]
             };
         },
-        { lastDate: new Date(from), days: [] }
+        { lastDate: new Date(from), weeks: [] }
     );
 
-    if (!shouldAddDaysAfter) return dayRecordDates.days;
+    if (!shouldAddWeeksAfter) return weekRecordDates.weeks;
 
-    const daysAfter = {
+    const weeksAfter = {
         type: 'uneventful',
-        start: getDayID(new Date(maybeLastEvent[0].getTime() + ONE_DAY)),
-        duration: getNumberOfDaysBetweenDates(maybeLastEvent[0], to)
+        start: getWeekID(new Date(maybeLastEvent[0].getTime() + ONE_WEEK)),
+        duration: getNumberOfWeeksBetweenDates(maybeLastEvent[0], to)
     };
 
-    return [...dayRecordDates.days, daysAfter];
+    return [...weekRecordDates.weeks, weeksAfter];
 };
 
 // Tracking function
@@ -179,12 +194,9 @@ const createTooltip = (event, targetElement) => {
     tooltip.className = 'tooltip';
     
     const date = new Date(event.start);
-    const options = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    };
-    const dateStr = new Intl.DateTimeFormat('en-US', options).format(date);
+    const weekNumber = getWeekNumber(date);
+    const year = date.getFullYear();
+    const dateStr = `Week ${weekNumber}, ${year}`;
     
     tooltip.innerHTML = `
         <div class="tooltip-title">${dateStr}</div>
@@ -322,12 +334,9 @@ const createMobilePopup = (event) => {
     popup.className = 'mobile-popup';
     
     const date = new Date(event.start);
-    const options = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    };
-    const dateStr = new Intl.DateTimeFormat('en-US', options).format(date);
+    const weekNumber = getWeekNumber(date);
+    const year = date.getFullYear();
+    const dateStr = `Week ${weekNumber}, ${year}`;
     
     popup.innerHTML = `
         <button class="mobile-popup-close">&times;</button>
@@ -442,16 +451,16 @@ const createEventElement = (event) => {
     return button;
 };
 
-const createLifeElement = (day) => {
+const createLifeElement = (week) => {
     const span = document.createElement('span');
     span.className = 'is-life';
     
-    const isFuture = new Date(day.start).getTime() > new Date().getTime();
+    const isFuture = new Date(week.start).getTime() > new Date().getTime();
     if (isFuture) {
         span.classList.add('is-future');
     }
     
-    const text = Array(day.duration).fill('·').join('​');
+    const text = Array(week.duration).fill('·').join('​');
     span.textContent = text;
     
     return span;
@@ -479,13 +488,11 @@ const showDescription = (event) => {
     const body = document.getElementById('description-body');
     
     const date = new Date(event.start);
-    const options = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    };
+    const weekNumber = getWeekNumber(date);
+    const year = date.getFullYear();
+    const dateStr = `Week ${weekNumber}, ${year}`;
     
-    title.textContent = new Intl.DateTimeFormat('en-US', options).format(date);
+    title.textContent = dateStr;
     body.innerHTML = renderMarkdown(event.desc);
     
     modal.style.display = 'flex';
@@ -511,35 +518,35 @@ const loadData = async () => {
         // Parse the YAML data
         const ymlRecords = jsyaml.load(dataYML);
         
-        const myDays = ymlRecords.reduce((acc, val) => {
+        const myWeeks = ymlRecords.reduce((acc, val) => {
             const ymlDate = Object.keys(val)[0];
             const date = new Date(ymlDate);
-            const dateKey = getDayID(date);
+            const dateKey = getWeekID(date);
             
             return { ...acc, [dateKey]: val[ymlDate] };
         }, {});
         
-        return { myDays };
+        return { myWeeks };
     } catch (error) {
         console.error('Error loading data:', error);
-        return { myDays: {} };
+        return { myWeeks: {} };
     }
 };
 
 // Main rendering function
-const renderDays = (renderableDays) => {
-    const container = document.getElementById('days-container');
+const renderWeeks = (renderableWeeks) => {
+    const container = document.getElementById('weeks-container');
     container.innerHTML = '';
     
-    renderableDays.forEach(day => {
+    renderableWeeks.forEach(week => {
         let element;
         
-        if (day.type === 'event') {
-            element = createEventElement(day);
-        } else if (day.type === 'marker') {
-            element = createMarkerElement(day);
+        if (week.type === 'event') {
+            element = createEventElement(week);
+        } else if (week.type === 'marker') {
+            element = createMarkerElement(week);
         } else {
-            element = createLifeElement(day);
+            element = createLifeElement(week);
         }
         
         container.appendChild(element);
@@ -548,20 +555,25 @@ const renderDays = (renderableDays) => {
 
 // Initialize the application
 const init = async () => {
-    const startDate = new Date('1987-06-07');
+    // Align start date to a Monday (beginning of week)
+    const originalStart = new Date('1987-06-07');
+    const startDate = new Date(getWeekID(originalStart));
     const today = new Date();
-    const endDate = new Date('2057-07-08');
+    // Align end date to a Sunday (end of week)
+    const originalEnd = new Date('2057-07-08');
+    const endWeekStart = new Date(getWeekID(originalEnd));
+    const endDate = new Date(endWeekStart.getTime() + 6 * 24 * 60 * 60 * 1000);
     
     const data = await loadData();
     
-    const renderableDays = calculateDays({
+    const renderableWeeks = calculateWeeks({
         from: startDate,
         to: endDate,
-        events: data.myDays,
+        events: data.myWeeks,
         today
     });
     
-    renderDays(renderableDays);
+    renderWeeks(renderableWeeks);
     
     // Set up modal event listeners
     const modal = document.getElementById('description-modal');
