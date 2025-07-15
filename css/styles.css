@@ -6,7 +6,7 @@
 html, body {
     padding: 0;
     margin: 0;
-    font-size: 16px;
+    font-size: 1rem;
     font-family: Garamond, Baskerville, 'Baskerville Old Face', 'Hoefler Text', 'Times New Roman', serif;
     line-height: 1.4;
     
@@ -16,8 +16,16 @@ html, body {
     --color-life: #6b8e6b;
     --color-future: #c8dac8;
     --color-link: rgb(34, 102, 68);
-    --max-content-width: 140ch;
+    --max-content-width: 80rem;
     --fade-height: 8rem;
+    
+    /* Font size scale */
+    --font-size-small: 1.125rem;    /* 18px - was base */
+    --font-size-base: 1.25rem;      /* 20px - was medium */
+    --font-size-medium: 1.5rem;     /* 24px - was large */
+    --font-size-large: 2rem;        /* 32px - was xl */
+    --font-size-xl: 3rem;           /* 48px - was xxl */
+    --font-size-xxl: 4rem;          /* 64px - new larger size */
     
     /* Life decade pastel colors (age-based) */
     --decade-0s: #ffeaa7; /* 0-9 years - pastel yellow for childhood */
@@ -84,20 +92,20 @@ header {
     padding: 1rem 0;
     margin: 0 calc(-50vw + 50%) 1rem calc(-50vw + 50%);
     width: 100vw;
-    font-size: 1.5rem;
+    font-size: var(--font-size-large);
     border-bottom: 1px solid rgba(45, 74, 45, 0.1);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 }
 
 .header-content {
-    padding: 0 1rem;
+    padding: 0 2rem;
     margin: 0 auto;
     max-width: var(--max-content-width);
 }
 
 h1 {
-    font-size: 3rem;
+    font-size: var(--font-size-xxl);
     font-weight: 500;
     margin-bottom: 0;
 }
@@ -106,6 +114,12 @@ h1 {
 @media (min-width: 600px) {
     .header-content {
         padding: 0 5rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .header-content {
+        padding: 0 6rem;
     }
 }
 
@@ -169,7 +183,7 @@ article {
     box-shadow: 0 0 3px rgba(45, 74, 45, 0.3);
     border-radius: 4px;
     vertical-align: top;
-    font-size: 16px;
+    font-size: var(--font-size-base);
     font-weight: 300;
     align-items: center;
     justify-content: center;
@@ -262,7 +276,7 @@ article {
     border-radius: 0.5rem;
     padding: 0.75rem;
     max-width: min(280px, 85vw);
-    font-size: 0.85rem;
+    font-size: var(--font-size-small);
     line-height: 1.4;
     z-index: 1000;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
@@ -283,14 +297,14 @@ article {
     font-weight: 600;
     margin: 0 0 0.5rem 0;
     color: var(--color-text);
-    font-size: 0.8rem;
+    font-size: var(--font-size-small);
 }
 
 .tooltip-name {
     font-weight: 600;
     margin: 0 0 0.5rem 0;
     color: var(--color-text);
-    font-size: 0.9rem;
+    font-size: var(--font-size-base);
 }
 
 .tooltip-content {
@@ -300,7 +314,7 @@ article {
 
 .tooltip-content p {
     margin: 0 0 0.4rem 0;
-    font-size: 0.85rem;
+    font-size: var(--font-size-small);
 }
 
 .tooltip-content p:last-child {
@@ -317,7 +331,7 @@ article {
 .tooltip-content h1,
 .tooltip-content h2,
 .tooltip-content h3 {
-    font-size: 0.9rem;
+    font-size: var(--font-size-base);
     margin: 0.4rem 0 0.2rem 0;
 }
 
@@ -342,16 +356,16 @@ article {
 @media (max-width: 600px) {
     .tooltip {
         max-width: min(240px, 90vw);
-        font-size: 0.8rem;
+        font-size: var(--font-size-small);
         padding: 0.6rem;
     }
     
     .tooltip-title {
-        font-size: 0.75rem;
+        font-size: var(--font-size-small);
     }
     
     .tooltip-content p {
-        font-size: 0.8rem;
+        font-size: var(--font-size-small);
     }
 }
 
@@ -402,7 +416,7 @@ article {
     right: 0.5rem;
     background: none;
     border: none;
-    font-size: 1.5rem;
+    font-size: var(--font-size-xl);
     cursor: pointer;
     color: var(--color-text);
     padding: 0.25rem;
@@ -414,17 +428,53 @@ article {
     margin: 0 0 0.75rem 0;
     padding-right: 2rem;
     color: var(--color-text);
+    font-size: var(--font-size-medium);
 }
 
 .mobile-popup-name {
     font-weight: 600;
     margin: 0 0 0.75rem 0;
     color: var(--color-text);
-    font-size: 1.1rem;
+    font-size: var(--font-size-medium);
 }
 
 .mobile-popup-content {
     margin: 0;
+    font-size: var(--font-size-base) !important;
+    line-height: 1.5;
+}
+
+.mobile-popup-content p {
+    font-size: var(--font-size-base) !important;
+    line-height: 1.5;
+    margin: 0 0 0.75rem 0;
+}
+
+.mobile-popup-content h1,
+.mobile-popup-content h2,
+.mobile-popup-content h3 {
+    font-size: var(--font-size-medium) !important;
+    margin: 0.75rem 0 0.5rem 0;
+}
+
+.mobile-popup-content ul,
+.mobile-popup-content ol {
+    font-size: var(--font-size-base) !important;
+    line-height: 1.5;
+}
+
+.mobile-popup-content li {
+    margin: 0.25rem 0;
+    font-size: var(--font-size-base) !important;
+}
+
+/* Override any inherited styles from md-content within mobile popup */
+.mobile-popup .md-content {
+    font-size: var(--font-size-base) !important;
+}
+
+.mobile-popup .md-content p {
+    font-size: var(--font-size-base) !important;
 }
 
 /* Life Styles */
@@ -432,7 +482,7 @@ article {
     display: inline;
     color: var(--color-life);
     font-family: monospace;
-    font-size: 1.5rem;
+    font-size: var(--font-size-base);
     letter-spacing: 0.15em;
     user-select: none;
     -webkit-user-select: none;
@@ -563,7 +613,7 @@ article {
     top: 50%;
     translate: -50% -50%;
     display: block;
-    font-size: 4em;
+    font-size: var(--font-size-xxl);
     animation: animateHeart 1s infinite;
 }
 
@@ -606,14 +656,14 @@ article {
 }
 
 .overlay h2 {
-    font-size: 1rem;
+    font-size: var(--font-size-base);
     font-weight: 600;
     margin: 0 0 0.75rem;
 }
 
 .close-info {
     opacity: 0.7;
-    font-size: 0.85rem;
+    font-size: var(--font-size-small);
 }
 
 /* Markdown Content Styles */
@@ -621,10 +671,25 @@ article {
     max-width: 100%;
     word-break: break-word;
     hyphens: auto;
+    font-size: var(--font-size-base);
+    line-height: 1.5;
 }
 
 .md-content > * {
     max-width: 100%;
+}
+
+.md-content p {
+    font-size: var(--font-size-base) !important;
+    line-height: 1.5;
+    margin: 0 0 0.75rem 0;
+}
+
+.md-content h1,
+.md-content h2,
+.md-content h3 {
+    font-size: var(--font-size-medium) !important;
+    margin: 0.75rem 0 0.5rem 0;
 }
 
 .md-content img {

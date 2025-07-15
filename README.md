@@ -165,6 +165,26 @@ Now modified by [@knhash](https://knhash.in).
 
 ## Recent Changes
 
+### v5.2 - Font Size Standardization & Mobile Modal Improvements (July 2025)
+
+- **Comprehensive font size standardization**: Converted all inconsistent font sizes (px, mixed rem/em values) to use a unified `rem`-based system
+- **CSS custom property scale**: Implemented standardized font size variables:
+  - `--font-size-small: 1.125rem` (18px) - Small text and tooltips
+  - `--font-size-base: 1.25rem` (20px) - Body text and standard elements
+  - `--font-size-medium: 1.5rem` (24px) - Modal titles and subheadings
+  - `--font-size-large: 2rem` (32px) - Header text
+  - `--font-size-xl: 3rem` (48px) - Close buttons and large icons
+  - `--font-size-xxl: 4rem` (64px) - Main title and heart animation
+- **Improved modal readability**: Significantly increased font sizes in mobile popups and tooltips with `!important` declarations to override conflicting styles
+- **Enhanced markdown content styling**: Applied consistent typography to all markdown-rendered content in modals
+- **Optimized layout width**: Reduced max content width from 140ch (2240px) to 80rem (1280px) for better readability and modern web standards
+- **Responsive header padding**: Improved horizontal spacing that scales properly with the larger font sizes:
+  - Mobile: 2rem padding (doubled from 1rem)
+  - 600px+: 5rem padding
+  - 1200px+: 6rem padding (new breakpoint)
+- **Accessibility improvements**: All font sizes now respect user browser preferences and scale appropriately
+- **Maintainability**: Centralized font sizing system makes future adjustments much easier
+
 ### v5.1 - Enhanced Layout & Sticky Header (July 2025)
 
 - **Full-width brick wall timeline**: Extended the weeks container to use the full viewport width while keeping header and text content constrained for optimal readability
