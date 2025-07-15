@@ -1,15 +1,3 @@
-- 1987-08-07:
-    name: My parents eat scrambled eggs with honey mushrooms
-
-- 1987-08-09:
-    name: Some of that food
-    desc: |
-      ...becomes a sperm cell and, eventually, me.
-
-      ![Me](assets/baby.jpg)
-
-      My weight hasn't changed since.
-
 - 1988-05-07:
     name: 'hello_world();'
     birthday: true

@@ -19,6 +19,18 @@ html, body {
     --max-content-width: 140ch;
     --fade-height: 8rem;
     
+    /* Life decade pastel colors (age-based) */
+    --decade-0s: #ffeaa7; /* 0-9 years - pastel yellow for childhood */
+    --decade-10s: #a29bfe; /* 10-19 years - pastel purple for teens */
+    --decade-20s: #74b9ff; /* 20-29 years - pastel blue for twenties */
+    --decade-30s: #fd79a8; /* 30-39 years - pastel pink for thirties */
+    --decade-40s: #fdcb6e; /* 40-49 years - pastel orange for forties */
+    --decade-50s: #6c5ce7; /* 50-59 years - pastel purple for fifties */
+    --decade-60s: #00b894; /* 60-69 years - pastel teal for sixties */
+    --decade-70s: #e84393; /* 70-79 years - pastel magenta for seventies */
+    --decade-80s: #b2bec3; /* 80-89 years - pastel gray for eighties */
+    --decade-future: #ddd; /* Future decades - light gray */
+    
     color: var(--color-text);
 }
 
@@ -123,6 +135,68 @@ article {
     text-align: center;
     line-height: 1;
     letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+/* Decade-based pastel backgrounds for events */
+.is-event.decade-0s {
+    background: var(--decade-0s);
+    color: #333;
+    border: 2px solid #d4ac0d;
+}
+
+.is-event.decade-10s {
+    background: var(--decade-10s);
+    color: white;
+    border: 2px solid #6c5ce7;
+}
+
+.is-event.decade-20s {
+    background: var(--decade-20s);
+    color: white;
+    border: 2px solid #0984e3;
+}
+
+.is-event.decade-30s {
+    background: var(--decade-30s);
+    color: white;
+    border: 2px solid #e84393;
+}
+
+.is-event.decade-40s {
+    background: var(--decade-40s);
+    color: #333;
+    border: 2px solid #e17055;
+}
+
+.is-event.decade-50s {
+    background: var(--decade-50s);
+    color: white;
+    border: 2px solid #5f3dc4;
+}
+
+.is-event.decade-60s {
+    background: var(--decade-60s);
+    color: white;
+    border: 2px solid #00a085;
+}
+
+.is-event.decade-70s {
+    background: var(--decade-70s);
+    color: white;
+    border: 2px solid #d63031;
+}
+
+.is-event.decade-80s {
+    background: var(--decade-80s);
+    color: #333;
+    border: 2px solid #636e72;
+}
+
+.is-event.decade-future {
+    background: var(--decade-future);
+    color: var(--color-text);
+    border: 2px solid #bbb;
 }
 
 .is-event.brick-2x1 {
@@ -130,15 +204,13 @@ article {
 }
 
 .is-event:hover {
-    background: var(--color-link);
-    box-shadow: 0 0 5px rgba(34, 102, 68, 0.4);
-    color: var(--color-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    filter: brightness(1.1);
 }
 
 .is-event.has-description:hover {
-    background: var(--color-link);
-    box-shadow: 0 0 5px rgba(34, 102, 68, 0.4);
-    color: var(--color-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    filter: brightness(1.1);
 }
 
 /* Tooltip Styles */
@@ -341,6 +413,68 @@ article {
     padding: 0;
     vertical-align: top;
     border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+/* Decade-based subtle pastel backgrounds for life squares */
+.life-square.decade-0s {
+    background: rgba(255, 234, 167, 0.3);
+    border-color: #d4ac0d;
+    border-width: 2px;
+}
+
+.life-square.decade-10s {
+    background: rgba(162, 155, 254, 0.3);
+    border-color: #6c5ce7;
+    border-width: 2px;
+}
+
+.life-square.decade-20s {
+    background: rgba(116, 185, 255, 0.3);
+    border-color: #0984e3;
+    border-width: 2px;
+}
+
+.life-square.decade-30s {
+    background: rgba(253, 121, 168, 0.3);
+    border-color: #e84393;
+    border-width: 2px;
+}
+
+.life-square.decade-40s {
+    background: rgba(253, 203, 110, 0.3);
+    border-color: #e17055;
+    border-width: 2px;
+}
+
+.life-square.decade-50s {
+    background: rgba(108, 92, 231, 0.3);
+    border-color: #5f3dc4;
+    border-width: 2px;
+}
+
+.life-square.decade-60s {
+    background: rgba(0, 184, 148, 0.3);
+    border-color: #00a085;
+    border-width: 2px;
+}
+
+.life-square.decade-70s {
+    background: rgba(232, 67, 147, 0.3);
+    border-color: #d63031;
+    border-width: 2px;
+}
+
+.life-square.decade-80s {
+    background: rgba(178, 190, 195, 0.3);
+    border-color: #636e72;
+    border-width: 2px;
+}
+
+.life-square.decade-future {
+    background: rgba(221, 221, 221, 0.3);
+    border-color: #bbb;
+    border-width: 2px;
 }
 
 .life-square.brick-2x1 {

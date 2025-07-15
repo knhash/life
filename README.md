@@ -10,16 +10,19 @@ The application features a beautiful pine green color scheme that creates a calm
 
 ## Features
 
-## Features
-
-- **Timeline visualization** with life events organized by weeks
-- **Interactive event descriptions** with markdown support
+- **Brick wall timeline visualization** with life events organized by weeks
+- **Decade-based color coding** with pastel colors representing different life stages
+- **Age-specific visual progression** from childhood (yellow) through old age (gray)
+- **Interactive event bricks** with hover tooltips on desktop and tap popups on mobile
+- **Enhanced borders** with darker 2px borders for better brick definition
+- **100-year lifespan view** spanning from birth to century mark
+- **Overall week numbering** counting sequentially from Week 1 of life
+- **Responsive tooltip system** with improved reliability for rapid navigation
 - **Birthday markers** and anniversary tracking
 - **"Today" marker** with animated heart
-- **Future/past week differentiation**
-- **Week number display** (ISO 8601 standard)
-- **Modal popups** for detailed event information
-- **Responsive design** for all screen sizes
+- **Future/past week differentiation** with decade-appropriate styling
+- **Modal popups** for detailed event information with markdown support
+- **Responsive design** for all screen sizes with device-specific interactions
 - **No build process** required - just serve the files
 
 ## Technology Stack
@@ -75,8 +78,9 @@ The application features a beautiful pine green color scheme that creates a calm
 
 ### Color Scheme
 
-The application uses a pine green color palette defined by CSS custom properties in `css/styles.css`:
+The application uses a decade-based pastel color system that represents different stages of life, defined by CSS custom properties in `css/styles.css`:
 
+**Base Colors:**
 ```css
 --color-bg: #f4f9f4;        /* Light pine green background */
 --color-bg-fade: #f4f9f4ee; /* Background with transparency */
@@ -86,7 +90,21 @@ The application uses a pine green color palette defined by CSS custom properties
 --color-link: rgb(34, 102, 68); /* Deep pine green for links */
 ```
 
-To customize colors, simply modify these variables at the top of the CSS file.
+**Decade Colors (Age-Based):**
+```css
+--decade-0s: #ffeaa7;     /* 0-9 years - Pastel yellow (childhood) */
+--decade-10s: #a29bfe;    /* 10-19 years - Pastel purple (teens) */
+--decade-20s: #74b9ff;    /* 20-29 years - Pastel blue (twenties) */
+--decade-30s: #fd79a8;    /* 30-39 years - Pastel pink (thirties) */
+--decade-40s: #fdcb6e;    /* 40-49 years - Pastel orange (forties) */
+--decade-50s: #6c5ce7;    /* 50-59 years - Pastel purple (fifties) */
+--decade-60s: #00b894;    /* 60-69 years - Pastel teal (sixties) */
+--decade-70s: #e84393;    /* 70-79 years - Pastel magenta (seventies) */
+--decade-80s: #b2bec3;    /* 80-89 years - Pastel gray (eighties) */
+--decade-future: #ddd;    /* 90+ years - Light gray (future) */
+```
+
+Each decade features matching darker borders for enhanced definition and visual clarity. Event bricks display full opacity colors while life squares show subtle translucent versions.
 
 ### Adding Life Events
 
@@ -147,6 +165,27 @@ Later created by [@rafalpast](https://sonnet.io).
 Now modified by [@knhash](https://knhash.in).
 
 ## Recent Changes
+
+### v5.0 - Decade-Based Pastel Design & 100-Year Lifespan (July 2025)
+
+- **Age-based decade visualization**: Implemented decade-based color coding for life stages (0-9, 10-19, 20-29, etc.)
+- **Pastel color scheme**: Replaced gradients with clean pastel colors for each decade of life
+- **Enhanced borders**: Added darker, more prominent 2px borders to all bricks for better definition
+- **100-year lifespan**: Extended timeline to exactly 100 years from birth date (1988-2088)
+- **Improved tooltip responsiveness**: Fixed critical bug where rapidly moving between events would prevent tooltips from showing
+- **Decade-specific styling**: Each life decade has unique pastel background and darker border colors:
+  - **0-9 years**: Pastel yellow with gold border (childhood)
+  - **10-19 years**: Pastel purple with purple border (teens)
+  - **20-29 years**: Pastel blue with blue border (twenties)
+  - **30-39 years**: Pastel pink with magenta border (thirties)
+  - **40-49 years**: Pastel orange with orange border (forties)
+  - **50-59 years**: Pastel purple with purple border (fifties)
+  - **60-69 years**: Pastel teal with teal border (sixties)
+  - **70-79 years**: Pastel magenta with red border (seventies)
+  - **80-89 years**: Pastel gray with gray border (eighties)
+  - **90+ years**: Light gray for future decades
+- **Life square styling**: Non-event weeks display subtle translucent versions of decade colors
+- **Optimized interaction**: Eliminated problematic timeout delays in mouse event handling for more reliable tooltip display
 
 ### v4.0 - Brick Wall Visualization (July 2025)
 

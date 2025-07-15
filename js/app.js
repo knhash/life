@@ -49,6 +49,39 @@ const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
 const getNumberOfWeeksBetweenDates = (from, to) =>
     Math.round((to.getTime() - from.getTime()) / ONE_WEEK);
 
+// Calculate which decade of life a given date falls into
+const getLifeDecade = (date) => {
+    const birthDate = new Date('1988-05-07'); // Your birth date
+    const currentDate = new Date(date);
+    
+    // Calculate age in years
+    const ageInYears = (currentDate.getTime() - birthDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000);
+    
+    if (ageInYears < 0) {
+        return 'pre-birth'; // Before birth
+    } else if (ageInYears < 10) {
+        return 'decade-0s';
+    } else if (ageInYears < 20) {
+        return 'decade-10s';
+    } else if (ageInYears < 30) {
+        return 'decade-20s';
+    } else if (ageInYears < 40) {
+        return 'decade-30s';
+    } else if (ageInYears < 50) {
+        return 'decade-40s';
+    } else if (ageInYears < 60) {
+        return 'decade-50s';
+    } else if (ageInYears < 70) {
+        return 'decade-60s';
+    } else if (ageInYears < 80) {
+        return 'decade-70s';
+    } else if (ageInYears < 90) {
+        return 'decade-80s';
+    } else {
+        return 'decade-future';
+    }
+};
+
 const getBirthdays = (birthdayWeekID, to, today) => {
     const todayID = getWeekID(today);
     const birthdayDate = new Date(birthdayWeekID);
@@ -324,6 +357,7 @@ const showTooltipWithDelay = (event, targetElement) => {
     // Clear any existing timeout
     if (tooltipTimeout) {
         clearTimeout(tooltipTimeout);
+        tooltipTimeout = null;
     }
     
     // Hide current tooltip immediately if switching between elements
@@ -342,9 +376,12 @@ const showTooltipWithDelay = (event, targetElement) => {
     // Show new tooltip after delay
     tooltipTimeout = setTimeout(() => {
         try {
-            const weekNumber = targetElement.dataset.weekNumber;
-            currentTooltip = createTooltip(event, targetElement, weekNumber);
-            tooltipTimeout = null;
+            // Double-check that we still want to show this tooltip
+            if (tooltipTimeout !== null) {
+                const weekNumber = targetElement.dataset.weekNumber;
+                currentTooltip = createTooltip(event, targetElement, weekNumber);
+                tooltipTimeout = null;
+            }
         } catch (error) {
             console.error('Error creating tooltip:', error, event);
             tooltipTimeout = null;
@@ -423,7 +460,8 @@ const hideMobilePopup = () => {
 
 const createEventElement = (event, position, isEvenRow, weekNumber) => {
     const button = document.createElement('button');
-    button.className = 'is-event brick-2x1'; // Events are always 2x1
+    const decadeClass = getLifeDecade(event.start);
+    button.className = `is-event brick-2x1 ${decadeClass}`; // Events are always 2x1
     button.id = event.start;
     button.innerHTML = weekNumber; // Display the overall week number
     button.dataset.weekNumber = weekNumber; // Store week number for tooltip
@@ -467,6 +505,7 @@ const createEventElement = (event, position, isEvenRow, weekNumber) => {
     } else {
         // Desktop: hover for tooltip for all events
         let isHovering = false;
+        let leaveTimeout = null;
         
         if (localStorage['sonnet::debug']) {
             console.log('Adding desktop hover events for:', event.name);
@@ -474,6 +513,11 @@ const createEventElement = (event, position, isEvenRow, weekNumber) => {
         
         button.addEventListener('mouseenter', () => {
             isHovering = true;
+            // Clear any pending leave timeout
+            if (leaveTimeout) {
+                clearTimeout(leaveTimeout);
+                leaveTimeout = null;
+            }
             if (localStorage['sonnet::debug']) {
                 console.log('Mouse enter on event:', event.name);
             }
@@ -485,12 +529,8 @@ const createEventElement = (event, position, isEvenRow, weekNumber) => {
             if (localStorage['sonnet::debug']) {
                 console.log('Mouse leave on event:', event.name);
             }
-            // Add small delay before hiding to prevent flicker when moving between elements
-            setTimeout(() => {
-                if (!isHovering) {
-                    hideTooltip();
-                }
-            }, 100);
+            // Clear any existing tooltip immediately when leaving
+            hideTooltip(true);
         });
         
         // Also add mouseover and mouseout as fallbacks
@@ -530,10 +570,12 @@ const createLifeElement = (week, position, isEvenRow, startWeekNumber, startDate
         span.classList.add('is-future');
     }
     
+    const decadeClass = getLifeDecade(week.start);
+    
     // Create CSS-based squares - all life squares are 1x1
     for (let i = 0; i < week.duration; i++) {
         const square = document.createElement('span');
-        square.className = 'life-square'; // All life squares are 1x1
+        square.className = `life-square ${decadeClass}`; // All life squares are 1x1
         span.appendChild(square);
     }
     
@@ -650,11 +692,11 @@ const renderWeeks = (renderableWeeks, startDate) => {
 // Initialize the application
 const init = async () => {
     // Align start date to a Monday (beginning of week)
-    const originalStart = new Date('1987-06-07');
+    const originalStart = new Date('1988-05-07');
     const startDate = new Date(getWeekID(originalStart));
     const today = new Date();
-    // Align end date to a Sunday (end of week)
-    const originalEnd = new Date('2057-07-08');
+    // Align end date to a Sunday (end of week) - exactly 100 years from birth
+    const originalEnd = new Date('2088-05-07');
     const endWeekStart = new Date(getWeekID(originalEnd));
     const endDate = new Date(endWeekStart.getTime() + 6 * 24 * 60 * 60 * 1000);
     
