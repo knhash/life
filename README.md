@@ -122,7 +122,6 @@ Edit the `data.yml` file in the root directory. Events are grouped by the week t
 ```
 
 **Note**: Events that fall within the same week (Monday-Sunday) will be grouped together and display the same week number.
-```
 
 ### Modifying Styles
 
@@ -165,6 +164,16 @@ Later created by [@rafalpast](https://sonnet.io).
 Now modified by [@knhash](https://knhash.in).
 
 ## Recent Changes
+
+### v5.1 - Enhanced Layout & Sticky Header (July 2025)
+
+- **Full-width brick wall timeline**: Extended the weeks container to use the full viewport width while keeping header and text content constrained for optimal readability
+- **Sticky header with full-width background**: Implemented a sticky header that spans the entire viewport width but maintains constrained text content aligned with the body
+- **Responsive padding system**: Added intelligent padding that scales with viewport size using `max()` functions to ensure proper spacing on all screen sizes
+- **Improved visual hierarchy**: Clear separation between constrained text content and full-width interactive timeline
+- **Better space utilization**: Timeline now spreads out more effectively across wide screens while maintaining appropriate margins
+- **Backdrop blur effects**: Added subtle backdrop filtering to the sticky header for enhanced visual depth
+- **Responsive breakpoints**: Comprehensive media queries ensure optimal layout across mobile, tablet, and desktop devices
 
 ### v5.0 - Decade-Based Pastel Design & 100-Year Lifespan (July 2025)
 
