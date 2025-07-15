@@ -148,6 +148,19 @@ Now modified by [@knhash](https://knhash.in).
 
 ## Recent Changes
 
+### v4.0 - Brick Wall Visualization (July 2025)
+
+- **Complete visual redesign**: Transformed from text-based timeline to interactive brick wall visualization
+- **Brick-based layout**: Events displayed as 2x1 green bricks, non-event weeks as 1x1 empty squares
+- **Overall week numbering**: Week numbers now count sequentially from birth (Week 1, 2, 3...) instead of calendar weeks
+- **Enhanced tooltips**: Desktop hover tooltips show week number, event name, and description with improved positioning
+- **Mobile popup system**: Touch-friendly popups for mobile devices with overlay and smooth animations
+- **CSS grid styling**: Precise brick dimensions (64px×32px base, 130px×32px for events) with consistent spacing
+- **Typography improvements**: Monospace font with optimized size (16px), weight (300), and letter-spacing
+- **Interactive hover effects**: Color transitions and shadow effects for better user feedback
+- **Responsive design**: Automatic device detection for mobile vs desktop interaction patterns
+- **Debug mode**: Built-in logging system for development and troubleshooting
+
 ### v3.0 - Weeks Instead of Days (July 2025)
 
 - **Week-based timeline**: Converted from daily to weekly visualization for a more condensed lifetime view

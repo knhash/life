@@ -38,6 +38,12 @@ const getWeekNumber = (date) => {
     return weekNo;
 };
 
+const getOverallWeekNumber = (date, startDate) => {
+    // Calculate overall week number from the start date
+    const weeksDiff = getNumberOfWeeksBetweenDates(startDate, date);
+    return weeksDiff + 1; // +1 because we want to start counting from week 1, not 0
+};
+
 const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
 
 const getNumberOfWeeksBetweenDates = (from, to) =>
@@ -91,9 +97,7 @@ const calculateWeeks = ({ from, to, events = {}, today }) => {
 
     renderableEvents.push([today, renderableToday]);
 
-    const birthday = eventsArr.find(([_, { birthday }]) => birthday);
-    const birthdayMarkers = birthday ? getBirthdays(birthday[0], to, today) : [];
-    renderableEvents.push(...birthdayMarkers);
+    // Birthday markers removed for brick wall effect
 
     renderableEvents.sort((eventA, eventB) => eventA[0].getTime() - eventB[0].getTime());
 
@@ -183,25 +187,40 @@ const isMobile = () => {
 let currentTooltip = null;
 let tooltipTimeout = null;
 
-const createTooltip = (event, targetElement) => {
+const createTooltip = (event, targetElement, overallWeekNumber) => {
     // Clear any existing timeout
     if (tooltipTimeout) {
         clearTimeout(tooltipTimeout);
         tooltipTimeout = null;
     }
     
+    // Debug logging
+    if (localStorage['sonnet::debug']) {
+        console.log('Creating tooltip for event:', event);
+    }
+    
     const tooltip = document.createElement('div');
     tooltip.className = 'tooltip';
     
     const date = new Date(event.start);
-    const weekNumber = getWeekNumber(date);
     const year = date.getFullYear();
-    const dateStr = `Week ${weekNumber}, ${year}`;
+    const dateStr = overallWeekNumber ? `Week ${overallWeekNumber}, ${year}` : `Week ${getWeekNumber(date)}, ${year}`;
+    
+    const tooltipContent = (event.desc && event.desc.trim()) ? 
+        `<div class="tooltip-content md-content">${renderMarkdown(event.desc)}</div>` : 
+        '';
     
     tooltip.innerHTML = `
         <div class="tooltip-title">${dateStr}</div>
-        <div class="tooltip-content md-content">${renderMarkdown(event.desc)}</div>
+        <div class="tooltip-name">${renderMarkdown(event.name || 'Unnamed Event', true)}</div>
+        ${tooltipContent}
     `;
+    
+    // Debug logging
+    if (localStorage['sonnet::debug']) {
+        console.log('Tooltip HTML:', tooltip.innerHTML);
+        console.log('Target element:', targetElement);
+    }
     
     // Add to body first to measure dimensions
     tooltip.style.visibility = 'hidden';
@@ -266,6 +285,10 @@ const createTooltip = (event, targetElement) => {
     // Show tooltip with animation
     requestAnimationFrame(() => {
         tooltip.classList.add('show');
+        if (localStorage['sonnet::debug']) {
+            console.log('Tooltip shown, classes:', tooltip.className);
+            console.log('Tooltip position:', tooltip.style.left, tooltip.style.top);
+        }
     });
     
     return tooltip;
@@ -318,15 +341,21 @@ const showTooltipWithDelay = (event, targetElement) => {
     
     // Show new tooltip after delay
     tooltipTimeout = setTimeout(() => {
-        currentTooltip = createTooltip(event, targetElement);
-        tooltipTimeout = null;
-    }, 200); // Reduced delay for better responsiveness
+        try {
+            const weekNumber = targetElement.dataset.weekNumber;
+            currentTooltip = createTooltip(event, targetElement, weekNumber);
+            tooltipTimeout = null;
+        } catch (error) {
+            console.error('Error creating tooltip:', error, event);
+            tooltipTimeout = null;
+        }
+    }, 150); // Slightly reduced delay for better responsiveness
 };
 
 // Mobile popup functionality
 let currentMobilePopup = null;
 
-const createMobilePopup = (event) => {
+const createMobilePopup = (event, overallWeekNumber) => {
     const overlay = document.createElement('div');
     overlay.className = 'mobile-popup-overlay';
     
@@ -334,14 +363,18 @@ const createMobilePopup = (event) => {
     popup.className = 'mobile-popup';
     
     const date = new Date(event.start);
-    const weekNumber = getWeekNumber(date);
     const year = date.getFullYear();
-    const dateStr = `Week ${weekNumber}, ${year}`;
+    const dateStr = overallWeekNumber ? `Week ${overallWeekNumber}, ${year}` : `Week ${getWeekNumber(date)}, ${year}`;
+    
+    const popupContent = (event.desc && event.desc.trim()) ? 
+        `<div class="mobile-popup-content md-content">${renderMarkdown(event.desc)}</div>` : 
+        '';
     
     popup.innerHTML = `
         <button class="mobile-popup-close">&times;</button>
         <div class="mobile-popup-title">${dateStr}</div>
-        <div class="mobile-popup-content md-content">${renderMarkdown(event.desc)}</div>
+        <div class="mobile-popup-name">${renderMarkdown(event.name || 'Unnamed Event', true)}</div>
+        ${popupContent}
     `;
     
     document.body.appendChild(overlay);
@@ -388,56 +421,94 @@ const hideMobilePopup = () => {
     }
 };
 
-const createEventElement = (event) => {
+const createEventElement = (event, position, isEvenRow, weekNumber) => {
     const button = document.createElement('button');
-    button.className = 'is-event';
+    button.className = 'is-event brick-2x1'; // Events are always 2x1
     button.id = event.start;
+    button.innerHTML = weekNumber; // Display the overall week number
+    button.dataset.weekNumber = weekNumber; // Store week number for tooltip
     
-    if (event.desc) {
-        button.classList.add('has-description');
+    // Debug: log event details
+    if (localStorage['sonnet::debug']) {
+        console.log('Creating event element:', event);
+        console.log('Week number:', weekNumber);
+        console.log('Position:', position, 'IsEvenRow:', isEvenRow);
+        console.log('Is mobile device:', isMobile());
+        console.log('Has touch:', ('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
+        console.log('Has hover:', window.matchMedia('(hover: hover)').matches);
+    }
+    
+    // Add hover functionality for all events
+    if (isMobile()) {
+        // Mobile: click for popup
+        let touchStartTime = 0;
         
-        if (isMobile()) {
-            // Mobile: click for popup
-            let touchStartTime = 0;
-            
-            button.addEventListener('touchstart', (e) => {
-                touchStartTime = Date.now();
-            });
-            
-            button.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                const touchDuration = Date.now() - touchStartTime;
-                if (touchDuration < 500) { // Quick tap
-                    createMobilePopup(event);
-                    trackEvent(`select:${event.name}`);
-                }
-            });
-            
-            // Fallback click handler
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                createMobilePopup(event);
+        button.addEventListener('touchstart', (e) => {
+            touchStartTime = Date.now();
+        });
+        
+        button.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            const touchDuration = Date.now() - touchStartTime;
+            if (touchDuration < 500) { // Quick tap
+                const weekNumber = button.dataset.weekNumber;
+                createMobilePopup(event, weekNumber);
                 trackEvent(`select:${event.name}`);
-            });
-        } else {
-            // Desktop: hover for tooltip, click for full modal
-            let isHovering = false;
-            
-            button.addEventListener('mouseenter', () => {
-                isHovering = true;
-                showTooltipWithDelay(event, button);
-            });
-            
-            button.addEventListener('mouseleave', () => {
-                isHovering = false;
-                // Add small delay before hiding to prevent flicker when moving between elements
-                setTimeout(() => {
-                    if (!isHovering) {
-                        hideTooltip();
-                    }
-                }, 100);
-            });
-            
+            }
+        });
+        
+        // Fallback click handler
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const weekNumber = button.dataset.weekNumber;
+            createMobilePopup(event, weekNumber);
+            trackEvent(`select:${event.name}`);
+        });
+    } else {
+        // Desktop: hover for tooltip for all events
+        let isHovering = false;
+        
+        if (localStorage['sonnet::debug']) {
+            console.log('Adding desktop hover events for:', event.name);
+        }
+        
+        button.addEventListener('mouseenter', () => {
+            isHovering = true;
+            if (localStorage['sonnet::debug']) {
+                console.log('Mouse enter on event:', event.name);
+            }
+            showTooltipWithDelay(event, button);
+        });
+        
+        button.addEventListener('mouseleave', () => {
+            isHovering = false;
+            if (localStorage['sonnet::debug']) {
+                console.log('Mouse leave on event:', event.name);
+            }
+            // Add small delay before hiding to prevent flicker when moving between elements
+            setTimeout(() => {
+                if (!isHovering) {
+                    hideTooltip();
+                }
+            }, 100);
+        });
+        
+        // Also add mouseover and mouseout as fallbacks
+        button.addEventListener('mouseover', () => {
+            if (localStorage['sonnet::debug']) {
+                console.log('Mouse over on event:', event.name);
+            }
+        });
+        
+        button.addEventListener('mouseout', () => {
+            if (localStorage['sonnet::debug']) {
+                console.log('Mouse out on event:', event.name);
+            }
+        });
+        
+        // Only add click handler for events with descriptions
+        if (event.desc && event.desc.trim()) {
+            button.classList.add('has-description');
             button.addEventListener('click', (e) => {
                 e.preventDefault();
                 hideTooltip(true); // Hide tooltip immediately when clicking
@@ -447,11 +518,10 @@ const createEventElement = (event) => {
         }
     }
     
-    button.innerHTML = renderMarkdown(event.name, true);
     return button;
 };
 
-const createLifeElement = (week) => {
+const createLifeElement = (week, position, isEvenRow, startWeekNumber, startDate) => {
     const span = document.createElement('span');
     span.className = 'is-life';
     
@@ -460,8 +530,12 @@ const createLifeElement = (week) => {
         span.classList.add('is-future');
     }
     
-    const text = Array(week.duration).fill('·').join('​');
-    span.textContent = text;
+    // Create CSS-based squares - all life squares are 1x1
+    for (let i = 0; i < week.duration; i++) {
+        const square = document.createElement('span');
+        square.className = 'life-square'; // All life squares are 1x1
+        span.appendChild(square);
+    }
     
     return span;
 };
@@ -534,22 +608,42 @@ const loadData = async () => {
 };
 
 // Main rendering function
-const renderWeeks = (renderableWeeks) => {
+const renderWeeks = (renderableWeeks, startDate) => {
     const container = document.getElementById('weeks-container');
     container.innerHTML = '';
+    
+    let currentPosition = 0; // Track horizontal position for staggered pattern
+    let rowStartPosition = 0; // Track where each row starts for alternating pattern
+    let isEvenRow = true; // Track if we're on an even or odd row
+    let currentWeekNumber = 1; // Track overall week number
     
     renderableWeeks.forEach(week => {
         let element;
         
         if (week.type === 'event') {
-            element = createEventElement(week);
-        } else if (week.type === 'marker') {
-            element = createMarkerElement(week);
+            element = createEventElement(week, currentPosition, isEvenRow, currentWeekNumber);
+            // Events are always 1x1, so increment by 1
+            currentPosition += 1;
+            currentWeekNumber += 1;
+        } else if (week.type === 'uneventful') {
+            element = createLifeElement(week, currentPosition, isEvenRow, currentWeekNumber, startDate);
+            // Life elements can have multiple weeks, so increment by duration
+            currentPosition += week.duration;
+            currentWeekNumber += week.duration;
         } else {
-            element = createLifeElement(week);
+            // Handle other types (markers, etc.)
+            element = createLifeElement(week, currentPosition, isEvenRow, currentWeekNumber, startDate);
+            currentPosition += 1;
+            currentWeekNumber += 1;
         }
         
         container.appendChild(element);
+        
+        // Check if we've reached the end of a row (approximately 52 weeks)
+        if (currentPosition - rowStartPosition >= 52) {
+            isEvenRow = !isEvenRow;
+            rowStartPosition = currentPosition;
+        }
     });
 };
 
@@ -573,7 +667,7 @@ const init = async () => {
         today
     });
     
-    renderWeeks(renderableWeeks);
+    renderWeeks(renderableWeeks, startDate);
     
     // Set up modal event listeners
     const modal = document.getElementById('description-modal');
@@ -582,7 +676,7 @@ const init = async () => {
     // Set up global event listeners for tooltips and mobile popups
     document.addEventListener('click', (e) => {
         // Hide tooltip when clicking outside
-        if (!e.target.closest('.is-event.has-description')) {
+        if (!e.target.closest('.is-event')) {
             hideTooltip(true);
         }
     });

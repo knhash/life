@@ -59,7 +59,7 @@ h1 {
 
 /* Article Styles */
 article {
-    line-height: 2;
+    line-height: 1.4;
 }
 
 .weeks {
@@ -70,6 +70,10 @@ article {
     list-style: none;
     background-color: var(--color-bg-fade);
     position: relative;
+    font-family: monospace;
+    line-height: 32px;
+    word-spacing: -2px;
+    letter-spacing: -1px;
 }
 
 .weeks::before {
@@ -97,32 +101,44 @@ article {
 
 /* Event Styles */
 .is-event {
-    display: inline;
+    display: inline-flex;
     appearance: none;
-    font-family: inherit;
+    font-family: monospace;
     border: none;
-    color: var(--color-text);
-    font-size: 1rem;
-    margin: 0;
-    background-color: rgba(34, 102, 68, 0.1);
-    padding: 0.25em 1ch 0.4em;
+    color: var(--color-bg);
+    width: 64px;
+    height: 32px;
+    margin: 1px;
+    background: var(--color-text);
+    padding: 0;
     position: relative;
-    top: -0.1em;
-    border-radius: 0.25rem;
+    cursor: pointer;
+    box-shadow: 0 0 3px rgba(45, 74, 45, 0.3);
+    border-radius: 4px;
+    vertical-align: top;
+    font-size: 16px;
+    font-weight: 300;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     line-height: 1;
+    letter-spacing: 0.5px;
+}
+
+.is-event.brick-2x1 {
+    width: 130px;
 }
 
 .is-event:hover {
-    background-color: rgba(34, 102, 68, 0.25);
+    background: var(--color-link);
+    box-shadow: 0 0 5px rgba(34, 102, 68, 0.4);
+    color: var(--color-bg);
 }
 
-.is-event:not(.has-description) {
-    pointer-events: none;
-}
-
-.is-event.has-description {
-    text-decoration: underline;
-    cursor: pointer;
+.is-event.has-description:hover {
+    background: var(--color-link);
+    box-shadow: 0 0 5px rgba(34, 102, 68, 0.4);
+    color: var(--color-bg);
 }
 
 /* Tooltip Styles */
@@ -155,6 +171,13 @@ article {
     margin: 0 0 0.5rem 0;
     color: var(--color-text);
     font-size: 0.8rem;
+}
+
+.tooltip-name {
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: var(--color-text);
+    font-size: 0.9rem;
 }
 
 .tooltip-content {
@@ -280,6 +303,13 @@ article {
     color: var(--color-text);
 }
 
+.mobile-popup-name {
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+    color: var(--color-text);
+    font-size: 1.1rem;
+}
+
 .mobile-popup-content {
     margin: 0;
 }
@@ -289,20 +319,36 @@ article {
     display: inline;
     color: var(--color-life);
     font-family: monospace;
-    letter-spacing: 0.5ch;
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
     user-select: none;
     -webkit-user-select: none;
     cursor: default;
     word-break: break-all;
-    padding-inline-start: 0.5ch;
-}
-
-.is-life:first-child {
-    padding-inline-start: 0;
 }
 
 .is-life.is-future {
     color: var(--color-future);
+}
+
+.life-square {
+    display: inline-block;
+    width: 64px;
+    height: 32px;
+    border: 1px solid rgba(119, 136, 153, 0.3);
+    background: transparent;
+    margin: 1px;
+    padding: 0;
+    vertical-align: top;
+    border-radius: 4px;
+}
+
+.life-square.brick-2x1 {
+    width: 130px;
+}
+
+.is-life {
+    line-height: 32px;
 }
 
 /* Marker Styles */
