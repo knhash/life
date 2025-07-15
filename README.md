@@ -6,6 +6,8 @@ A life timeline visualization in pure HTML, CSS, and JavaScript.
 
 This application visualizes a life as a timeline of days, with interactive events, milestone markers, and descriptions. Originally built with Svelte, it has been converted to vanilla web technologies for simplicity and broader compatibility.
 
+The application features a beautiful pine green color scheme that creates a calming, natural aesthetic while maintaining excellent readability and contrast.
+
 ## Features
 
 ## Features
@@ -69,6 +71,21 @@ This application visualizes a life as a timeline of days, with interactive event
 
 ## Customization
 
+### Color Scheme
+
+The application uses a pine green color palette defined by CSS custom properties in `css/styles.css`:
+
+```css
+--color-bg: #f4f9f4;        /* Light pine green background */
+--color-bg-fade: #f4f9f4ee; /* Background with transparency */
+--color-text: #2d4a2d;      /* Dark pine green text */
+--color-life: #6b8e6b;      /* Medium pine green for life dots */
+--color-future: #c8dac8;    /* Light pine green for future days */
+--color-link: rgb(34, 102, 68); /* Deep pine green for links */
+```
+
+To customize colors, simply modify these variables at the top of the CSS file.
+
 ### Adding Life Events
 
 Edit the `dataYML` variable in `js/app.js`:
@@ -87,10 +104,11 @@ const dataYML = `
 ### Modifying Styles
 
 Edit `css/styles.css` to customize:
-- Colors (CSS custom properties at the top)
-- Typography
-- Layout and spacing
-- Animations
+- **Colors**: Modify CSS custom properties for theme changes
+- **Typography**: Font families, sizes, and spacing
+- **Layout**: Grid, spacing, and responsive breakpoints
+- **Animations**: Heart animation and transitions
+- **Background**: Clean solid color (background images removed for minimalist design)
 
 ### Adding Images
 
@@ -122,3 +140,13 @@ Originally inspired by Buster Benson's [Life in Weeks](https://busterbenson.com/
 Later created by [@rafalpast](https://sonnet.io).
 
 Now modified by [@knhash](https://knhash.in).
+
+## Recent Changes
+
+### v2.0 - Pine Green Theme (July 2025)
+
+- **Complete color scheme overhaul**: Migrated from pink theme to calming pine green palette
+- **Removed background images**: Simplified design with clean solid background for better focus on content
+- **Enhanced accessibility**: Improved color contrast and readability
+- **CSS custom properties**: All colors now use CSS variables for easy customization
+- **Event highlighting**: Updated event backgrounds and hover states to match new theme
